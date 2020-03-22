@@ -1,0 +1,124 @@
+---
+title: "TEST"
+output:
+  rmdformats::html_clean:
+    fig_width: 6
+    fig_height: 6
+    highlight: kate
+    thumbnails: true
+    lightbox: true
+    gallery: true
+---
+
+```{r knitr_init, echo=FALSE, cache=FALSE}
+library(knitr)
+library(rmdformats)
+
+## Global options
+options(max.print="75")
+opts_chunk$set(echo=TRUE,
+	             cache=FALSE,
+               prompt=FALSE,
+               tidy=TRUE,
+               comment=NA,
+               message=FALSE,
+               warning=FALSE)
+opts_knit$set(width=75)
+```
+
+### Brett J. Gall
+
+#### PhD Candidate | Duke University | [http://brettgall.com](http://brettgall.com)
+
+#### `r Sys.Date()`
+
+A student recently asked me where to 
+
+
+# Load packages
+library(lme4)
+library(dplyr)
+set.seed(123)
+
+# Generate sample data
+df <- data.frame(x = rep(NA_real_, 500)) %>%
+  dplyr::mutate(
+    x = sample(c(0, 1), 500 , replace = TRUE),
+    z = runif(500),
+    y = x + z + rnorm(500)
+  )
+
+# Fit model
+raw_model <- lme4::lmer(formula = y ~ z + (1 | x), data = df)
+model <- raw_model %>% summary()
+
+# Variables that are "random"
+model$ngrps
+
+# Variables that are "fixed" are here
+model$coefficients
+
+# Just grab the row names vector to get variables
+fixed <- model$coefficients %>% row.names()
+fixed[2]
+
+# Can also find the fixed variables in
+# the variance-covariance matrix, if
+# you have no varying slopes models,
+# omit the intercept
+model_vcov <- model$vcov %>% row.names()
+model_vcov[2:length(model_vcov)]
+
+# Alternatively, this may sound like too much work...
+# you just just use regular expressions to take the
+# model formula and identify what you want.
+
+# Here's the model call
+form <- model$call
+
+# Casting to character gives the model
+# itself (excluding the rest of the call)
+m1 <- form %>% as.character() %>% .[2]
+
+# You can remove everything from ~ and before
+tilde <- gregexpr(pattern = "~", m1)
+
+cleaned <- m1 %>% 
+           substr(start = tilde[[1]][1] + 2, 
+                  stop = nchar(m1))
+
+# Split string, throw into a data frame
+# or easier cleaning/tidying
+cleaned_split <- strsplit(cleaned, 
+                          split = " + ", 
+                          fixed = TRUE) %>%
+                 .[[1]] %>%
+                 tibble::enframe()
+
+# Create an indicator for "level"  based on presence
+# of ( character. May not generalize if your variables
+# are named with (. Only works for single level, random
+# intercept, but easily extended to higher levels, will
+# also have issue with varying coefficient models.
+output <- cleaned_split %>% 
+          mutate(fixed = case_when(grepl("\\(", value) == TRUE ~ 0, 
+                                   TRUE ~ 1))
+
+# You can then remove the (1 + ) from the variable names
+output %>% dplyr::mutate(value = gsub("\\(1 \\| ", "", value),
+                         value = gsub("\\)", "", value))
+
+# We can also compare this to 
+
+raw_model %>% fixef()
+getAnywhere(lme4::fixef)
+
+lme4::fixef
+nlme::fixef
+
+
+lme4::fixef.merMod
+getAnywhere(fixef.merMod)
+            %>% methods()
+
+all.pos

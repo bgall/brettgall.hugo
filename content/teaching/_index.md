@@ -17,3 +17,5 @@ type: "blank"
 ### Workshops and Trainings (instructor)
 
 - Tools for Transparent, Reproducible, and Efficient Science (Fall 2017, Fall 2019 [slides](https://osf.io/4q9k6/))
+
+- Anchoring Vignettes for Differential Item Functioning (Spring 2018 [slides](https://www.dropbox.com/s/9nhd1mu74on0jtm/Anchoring%20Vignettes%20for%20Differential%20Item%20Functioning.pdf?dl=0))

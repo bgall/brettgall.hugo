@@ -24,4 +24,4 @@ Alternatively, researchers may lack the knowledge or tools to conduct power anal
 
 To this end, I developed some code to analyze the effects of design and modeling choices - such as estimand choice or choices over the number of participants, attributes and tasks  - on the statistical power of conjoint designs via simulation in R and packaged some of it in tutorial to help others develop their own code. By laying out the logic behind each step of the code and providing some canned functions (and discussion of how to modify the code to your own analyses), hopefully you will have some building blocks for your own analyses.
 
-You can download the tutorial here: [Simulation-based power calculations for conjoint experiments](https://dl.dropbox.com/s/4y0mwwbjm49chvr/simulating_conjoint_power_in_r.html?dl=0)
+You can find the tutorial as an Open Science Framework Preprint: [Simulation-based power calculations for conjoint experiments](https://osf.io/bv6ug)
